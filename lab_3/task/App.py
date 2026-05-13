@@ -6,6 +6,11 @@ import RSA
 def generate_keys(symmetric_txt: str, public_pem: str, private_pem: str) -> None:
     """
     Генерация и сохранение ключей
+
+    Args:
+        symmetric_txt: путь к зашифрованному ключу симметричного алгоритма
+        public_pem: путь к открытому ключу асимметричного алгоритма
+        private_pem: путь к закрытому ключу асимметричного алгоритма
     """
     symm_key = SM4.key_gen()
     private_key, public_key = RSA.key_gen()
@@ -22,6 +27,12 @@ def generate_keys(symmetric_txt: str, public_pem: str, private_pem: str) -> None
 def symmetric_encryption(text_txt: str, symmetric_txt: str, private_pem: str, encrypted_txt: str) -> None:
     """
     Шифрование данных
+
+    Args:
+        text_txt: путь к исходному сообщению
+        symmetric_txt: путь к зашифрованному ключу симметричного алгоритма
+        private_pem: путь к закрытому ключу асимметричного алгоритма
+        encrypted_txt: путь к зашифрованному сообщению
     """
     text = InsOuts.read_text(text_txt)
     c_key = InsOuts.read_bin(symmetric_txt)
@@ -38,6 +49,12 @@ def symmetric_encryption(text_txt: str, symmetric_txt: str, private_pem: str, en
 def symmetric_decryption(encrypted_txt: str, symmetric_txt: str, private_pem: str, decrypted_txt: str) -> None:
     """
     Дешифрование данных
+
+    Args:
+        encrypted_txt: путь к зашифрованному сообщению
+        symmetric_txt: путь к ключу симметричного алгоритма
+        private_pem: путь к закрытому ключу асимметричного алгоритма
+        decrypted_txt: путь к расшифрованному сообщению
     """
     c_text = InsOuts.read_bin(encrypted_txt)
     c_key = InsOuts.read_bin(symmetric_txt)
@@ -54,6 +71,9 @@ def symmetric_decryption(encrypted_txt: str, symmetric_txt: str, private_pem: st
 def menu_interface() -> int:
     """
     Вывод меню
+
+    Returns:
+        Выбранный пункт в меню
     """
     actions = {
         "1": "Генерация ключей",
@@ -77,6 +97,9 @@ def menu_interface() -> int:
 def app(settings_json: str) -> None:
     """
     Приложение
+
+    Args:
+        settings_json: путь к файлу с настройками
     """
     settings = InsOuts.read_json(settings_json)
     text_txt = settings["initial_file"]
@@ -88,27 +111,28 @@ def app(settings_json: str) -> None:
 
     act = menu_interface()
     while act:
-        if act == 0:        #Завершение работы
-            return
-        elif act == 1:      #Генерация ключей
-            generate_keys(symmetric_txt, public_pem, private_pem)
-        elif act == 2:      #Шифрование данных
-            symmetric_encryption(text_txt, symmetric_txt, private_pem, encrypted_txt)
-        elif act == 3:      #Дешифрование данных
-            symmetric_decryption(encrypted_txt, symmetric_txt, private_pem, decrypted_txt)
-        elif act == 4:      #Вывести незашифрованный текст
-            text = InsOuts.read_text(text_txt)
-            print()
-            print(text)
-        elif act == 5:      #Вывести расшифрованный текст
-            d_text = InsOuts.read_text(decrypted_txt)
-            print()
-            print(d_text)
-        elif act == 6:      #Вывести пути к используемым файлам
-            print("Шифруемый текст:", text_txt)
-            print("Зашифрованный текст:", encrypted_txt)
-            print("Расшифрованный текст:", decrypted_txt)
-            print("Зашифрованный симметричный ключ:", symmetric_txt)
-            print("Открытый ключ:", public_pem)
-            print("Закрытый ключ:", private_pem, "\n")
+        match act:
+            case 0:      #Завершение работы
+                return
+            case 1:      #Генерация ключей
+                generate_keys(symmetric_txt, public_pem, private_pem)
+            case 2:      #Шифрование данных
+                symmetric_encryption(text_txt, symmetric_txt, private_pem, encrypted_txt)
+            case 3:      #Дешифрование данных
+                symmetric_decryption(encrypted_txt, symmetric_txt, private_pem, decrypted_txt)
+            case 4:      #Вывести незашифрованный текст
+                text = InsOuts.read_text(text_txt)
+                print()
+                print(text)
+            case 5:      #Вывести расшифрованный текст
+                d_text = InsOuts.read_text(decrypted_txt)
+                print()
+                print(d_text)
+            case 6:      #Вывести пути к используемым файлам
+                print("Шифруемый текст:", text_txt)
+                print("Зашифрованный текст:", encrypted_txt)
+                print("Расшифрованный текст:", decrypted_txt)
+                print("Зашифрованный симметричный ключ:", symmetric_txt)
+                print("Открытый ключ:", public_pem)
+                print("Закрытый ключ:", private_pem, "\n")
         act = menu_interface()

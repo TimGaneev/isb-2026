@@ -10,6 +10,9 @@ bytes_num = 16
 def key_gen() -> bytes:
     """
     Генерация ключа симметричного алгоритма
+
+    Returns:
+        ключ симметричного алгоритма
     """
     key = os.urandom(bytes_num)
     return key
@@ -18,6 +21,12 @@ def key_gen() -> bytes:
 def encryption(text: bytes, key: bytes) -> bytes:
     """
     Шифрование алгоритмом SM4
+
+    Args:
+        text: шифруемое сообщение
+        key: ключ симметричного алгоритма
+    Returns:
+        зашифрованное сообщение и инициализирующий вектор
     """
     iv = os.urandom(bytes_num)
     cipher = Cipher(algorithms.SM4(key), modes.CBC(iv))
@@ -32,6 +41,12 @@ def encryption(text: bytes, key: bytes) -> bytes:
 def decryption(c_text: bytes, key: bytes) -> bytes:
     """
     Дешифрование алгоритмом SM4
+
+    Args:
+        c_text: зашифрованное сообщение и инициализирующий вектор
+        key: ключ симметричного алгоритма
+    Returns:
+        расшифрованное сообщение
     """
     split_idx = len(c_text)-bytes_num
     iv = c_text[split_idx:]
